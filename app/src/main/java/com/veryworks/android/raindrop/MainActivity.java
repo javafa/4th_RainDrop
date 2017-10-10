@@ -32,15 +32,27 @@ public class MainActivity extends AppCompatActivity {
         height = metrics.heightPixels;
     }
 
+    Random random = new Random();
     public void addRainDrop(View v){
-        Random random = new Random();
+        new Thread(){
+            public void run(){
+                while(runFlag) {
+                    int x = random.nextInt(width);
+                    int speed = random.nextInt(2) + 1;
+                    int size = random.nextInt(40) + 10;
+                    int y = size * -1;
 
-        int x = random.nextInt(width);
-        int speed = random.nextInt(30)+10;
-        int size = random.nextInt(100);
+                    RainDrop rainDrop = new RainDrop(x, y, speed, size, Color.RED, height);
+                    view.addRainDrop(rainDrop);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
 
-        RainDrop rainDrop = new RainDrop(x, 0, speed, size, Color.RED, height);
-        view.addRainDrop(rainDrop);
     }
 
 
@@ -51,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
-class RainDrop extends Thread{
+class RainDrop {
     // 속성
     float x;
     float y;
@@ -60,18 +72,6 @@ class RainDrop extends Thread{
     int color;
     // 생명주기 - 바닥에 닿을때 까지
     float limit;
-
-    // 기능
-    public void run(){
-        while(y < limit) {
-            y = y + speed;
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public RainDrop(float x, float y, float speed, float size, int color, float limit){
         this.x = x;

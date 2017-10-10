@@ -27,7 +27,9 @@ public class CustomView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if(rainDrops.size() > 0) {
-            for(RainDrop rainDrop : rainDrops) {
+
+            for(int i=0; i< rainDrops.size(); i++) {
+                RainDrop rainDrop = rainDrops.get(i);
                 paint.setColor(rainDrop.color);
                 canvas.drawCircle(rainDrop.x
                         , rainDrop.y
@@ -39,13 +41,21 @@ public class CustomView extends View {
 
     public void addRainDrop(RainDrop rainDrop){
         this.rainDrops.add(rainDrop);
-        rainDrop.start();
     }
 
     public void runStage(){
         new Thread(){
             public void run(){
                 while(MainActivity.runFlag){
+                    // 반복문을 돌면서 전체 오브젝트의 좌표값을 갱신해준다
+                    for(int i=0;i<rainDrops.size();i++) {
+                        if(rainDrops.get(i).y > rainDrops.get(i).limit) {
+                            rainDrops.remove(i);
+                            i--;
+                        } else {
+                            rainDrops.get(i).y += rainDrops.get(i).speed;
+                        }
+                    }
                     postInvalidate();
                     try {
                         Thread.sleep(10);
